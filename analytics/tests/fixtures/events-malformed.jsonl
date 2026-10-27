@@ -1,0 +1,3 @@
+{"event":"booking-created","occurredAt":"2026-10-19T09:00:00Z","bookingId":"bk-1","roomId":"r-1","userId":"u-1","start":"2026-10-20T09:00:00Z","end":"2026-10-20T10:00:00Z","attendees":4}
+
+{not json at all}

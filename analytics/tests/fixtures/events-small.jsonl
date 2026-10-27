@@ -1,0 +1,6 @@
+{"event":"booking-created","occurredAt":"2026-10-19T09:00:00Z","bookingId":"bk-1","roomId":"r-1","userId":"u-1","start":"2026-10-20T09:00:00Z","end":"2026-10-20T10:00:00Z","attendees":4}
+{"event":"booking-created","occurredAt":"2026-10-19T09:05:00Z","bookingId":"bk-2","roomId":"r-1","userId":"u-2","start":"2026-10-20T10:00:00Z","end":"2026-10-20T12:00:00Z","attendees":6}
+{"event":"booking-created","occurredAt":"2026-10-19T09:10:00Z","bookingId":"bk-3","roomId":"r-2","userId":"u-3","start":"2026-10-20T13:00:00Z","end":"2026-10-20T14:30:00Z","attendees":12}
+{"event":"booking-cancelled","occurredAt":"2026-10-19T14:00:00Z","bookingId":"bk-2","roomId":"r-1","userId":"u-2","start":"2026-10-20T10:00:00Z","end":"2026-10-20T12:00:00Z","attendees":6}
+{"event":"waitlist-promoted","occurredAt":"2026-10-19T14:00:00Z","bookingId":"bk-4","roomId":"r-1","userId":"u-4","start":"2026-10-20T10:00:00Z","end":"2026-10-20T12:00:00Z","attendees":3,"waitlistEntryId":"wl-1","waitlistSequence":1}
+{"event":"booking-created","occurredAt":"2026-10-19T15:00:00Z","bookingId":"bk-5","roomId":"r-2","userId":"u-1","start":"2026-10-21T09:00:00Z","end":"2026-10-21T10:00:00Z","attendees":2}
