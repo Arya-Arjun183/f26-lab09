@@ -67,4 +67,10 @@ The agent proposed the event log as possible shared state. I checked the actual 
 
 ## Milestone 3: One boundary
 
-Pending selection after the copy checks.
+**The boundary.** Add an operation to the existing `core-domain` `BookingStore` port, such as `reserveIfFree(BookingRequest, Booking)`, promising to atomically test the requested interval and write the booking. A SQL-backed `storage` implementation owns the transaction and enforces a room/time exclusion constraint (or equivalent serialized transaction). Move only BookingService's room-conflict read/check/write behind this port; rules, user limits, events, waitlisting, HTTP, and core-domain values stay where they are.
+
+**Who owns the data.** `storage` owns the durable booking calendar and alone writes confirmed booking rows and arbitrates reservation transactions. `core-domain` defines the port and rules; HTTP, CLI, notifications, billing, and analytics may use services or events, but may not write/query the database directly.
+
+**The one invariant that must not cross.** For every room ID and pair of overlapping UTC intervals, storage may commit at most one confirmed booking. Any code that writes a confirmed booking without the atomic storage operation violates it.
+
+**What the boundary costs.** We must version and test a richer port, operate and migrate a database, maintain in-memory and SQL implementations, and pay database latency/contention for popular rooms. It leaves token split-brain unfixed; accounts/sessions need their own shared or stateless-verification boundary. It also does not make fire-and-forget event delivery exactly once.
