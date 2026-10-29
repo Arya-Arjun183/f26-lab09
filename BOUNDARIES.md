@@ -45,7 +45,7 @@ Booking path: `CampusReserveServer -> CampusReservePlatform -> Router -> Booking
 
 **The claim.** A token minted by either API copy works on every request through the proxy, whichever copy answers it.
 
-**The script and its result.** `load/tokens-any-copy.js` sends 20 non-reused proxy connections with one `u-1` token. Its `token_works_on_every_copy: rate==1` threshold requires every response to be 200, and the script logs each `X-Upstream` address. The script is run with `docker compose run --rm --no-deps -e TOKEN='one u-1 token' k6 run /scripts/tokens-any-copy.js`. A two-copy run is expected to show two upstream addresses and 200s from the minting copy plus 401s from the other; therefore the threshold fails.
+**The script and its result.** `load/tokens-any-copy.js` sends 20 non-reused proxy connections with one `u-1` token. Its `token_works_on_every_copy: rate==1` threshold requires every response to be 200, and the script logs each `X-Upstream` address. The script is run with `docker compose run --rm --no-deps -e TOKEN='one u-1 token' k6 run /scripts/tokens-any-copy.js`. The live run saw two upstreams (`172.18.0.2:8080`, `172.18.0.4:8080`) and 7/20 200 responses (35.00%); the other 13 were 401, so the threshold failed.
 
 **Why, from the code.** `TokenService` owns `LinkedHashMap<String, Token> byValue` (line 30). Every `CampusReservePlatform` constructs a fresh `AccountDirectory`, `TokenService`, and `AuthorizationService` (lines 52--54). `RequestAuth.require` authenticates through this process-local map; no token state is shared.
 
@@ -55,7 +55,7 @@ Booking path: `CampusReserveServer -> CampusReservePlatform -> Router -> Booking
 
 **The claim.** For a given room and time interval, at most one confirmed booking exists across the platform.
 
-**The script and its result.** `load/booking-at-most-once.js` concurrently posts the same future one-hour request directly to each API container, using each container's own `u-1` token. It bypasses the proxy because the token failure would obscure the booking result. Its thresholds, `room_slot_booked_at_most_once: rate==1` and `duplicate_confirmations: count==0`, fail when both copies return 201.
+**The script and its result.** `load/booking-at-most-once.js` concurrently posts the same future one-hour request directly to each API container, using each container's own `u-1` token. It bypasses the proxy because the token failure would obscure the booking result. The live run returned `201,201`; therefore `room_slot_booked_at_most_once: rate==1` measured 0.00% and `duplicate_confirmations: count==0` measured 1, so both thresholds failed.
 
 **Why, from the code.** `CampusReservePlatform` calls `StoreRegistry.inMemory()` (line 44), which creates distinct `InMemoryBookingStore`, room, user, and waitlist stores (`StoreRegistry` lines 23--26). `BookingService.requestBooking` reads `bookings.findActiveByRoom` and then saves. Each copy therefore reads its own empty calendar and confirms independently.
 
